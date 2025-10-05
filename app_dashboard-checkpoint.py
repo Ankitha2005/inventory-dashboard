@@ -9,10 +9,12 @@ import joblib
 import lightgbm as lgb
 
 # --- CONFIG ---
-BASE = Path(r"D:\CAPSTONE_FINAL")
-DATA_PATH = BASE / "data" / "final_merged_inventory_sentiment.csv"
-# prefer a small sampled reranker file for deployments (keeps repo small)
-SAMPLE_RERANK = BASE / "data" / "reranker_small.csv"   # <- your smaller sample file
+from pathlib import Path
+
+BASE = Path(_file_).resolve().parent
+DATA_PATH = BASE / "final_merged_inventory_sentiment.csv"
+RERANK_PATH = BASE / "reranker_small.csv"
+MODEL_PATH = BASE / "lightgbm_recommender.txt"   # your model file
 DEFAULT_RERANK = BASE / "data" / "reranker_train.csv"  # <- original (big) file
 
 # choose the small sample if present, otherwise use the original path
