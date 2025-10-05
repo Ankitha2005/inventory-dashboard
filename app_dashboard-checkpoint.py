@@ -11,8 +11,12 @@ import lightgbm as lgb
 # --- CONFIG ---
 BASE = Path(r"D:\CAPSTONE_FINAL")
 DATA_PATH = BASE / "data" / "final_merged_inventory_sentiment.csv"
-RERANK_PATH = BASE / "data" / "reranker_train.csv"
-# Model path can be either a joblib .pkl with {"model":..., "features":...} or a LightGBM text model.
+# prefer a small sampled reranker file for deployments (keeps repo small)
+SAMPLE_RERANK = BASE / "data" / "reranker_small.csv"   # <- your smaller sample file
+DEFAULT_RERANK = BASE / "data" / "reranker_train.csv"  # <- original (big) file
+
+# choose the small sample if present, otherwise use the original path
+RERANK_PATH = SAMPLE_RERANK if SAMPLE_RERANK.exists() else DEFAULT_RERANK# Model path can be either a joblib .pkl with {"model":..., "features":...} or a LightGBM text model.
 MODEL_PATH = BASE / "models" / "reranker_lgbm.pkl"   # primary
 LEGACY_MODEL_PATH = BASE / "data" / "lightgbm_recommender.txt"  # fallback (older path)
 
