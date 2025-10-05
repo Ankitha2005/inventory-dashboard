@@ -11,10 +11,20 @@ import lightgbm as lgb
 # --- CONFIG ---
 from pathlib import Path
 
-BASE = Path(_file_).resolve().parent
+from pathlib import Path
+
+# robust base path for local dev and Streamlit Cloud
+# prefer: project root where the app file is executed
+BASE = Path.cwd()                # <--- use this
+# If you prefer relative to the script file and _file_ is available, fallback:
+# try:
+#     BASE = Path(_file_).resolve().parent
+# except NameError:
+#     BASE = Path.cwd()
+
 DATA_PATH = BASE / "final_merged_inventory_sentiment.csv"
-RERANK_PATH = BASE / "reranker_small.csv"
-MODEL_PATH = BASE / "lightgbm_recommender.txt"   # your model file
+RERANK_PATH = BASE / "reranker_small.csv"   # or your filename
+MODEL_PATH = BASE / "lightgbm_recommender.txt"
 DEFAULT_RERANK = BASE / "data" / "reranker_train.csv"  # <- original (big) file
 
 # choose the small sample if present, otherwise use the original path
