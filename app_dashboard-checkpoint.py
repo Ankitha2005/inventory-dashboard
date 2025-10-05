@@ -25,11 +25,9 @@ BASE = Path.cwd()                # <--- use this
 DATA_PATH = BASE / "final_merged_inventory_sentiment.csv"
 RERANK_PATH = BASE / "reranker_small.csv"   # or your filename
 MODEL_PATH = BASE / "lightgbm_recommender.txt"
-DEFAULT_RERANK = BASE / "data" / "reranker_train.csv"  # <- original (big) file
 
 # choose the small sample if present, otherwise use the original path
-MODEL_PATH = BASE / "models" / "reranker_lgbm.pkl"   # primary
-LEGACY_MODEL_PATH = BASE / "data" / "lightgbm_recommender.txt"  # fallback (older path)
+LEGACY_MODEL_PATH = BASE /  "lightgbm_recommender.txt"  # fallback (older path)
 
 st.set_page_config(page_title="Inventory & Sentiment Dashboard", layout="wide")
 st.title("📊 Inventory & Sentiment Analytics Dashboard")
