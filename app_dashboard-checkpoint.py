@@ -28,7 +28,6 @@ MODEL_PATH = BASE / "lightgbm_recommender.txt"
 DEFAULT_RERANK = BASE / "data" / "reranker_train.csv"  # <- original (big) file
 
 # choose the small sample if present, otherwise use the original path
-RERANK_PATH = SAMPLE_RERANK if SAMPLE_RERANK.exists() else DEFAULT_RERANK# Model path can be either a joblib .pkl with {"model":..., "features":...} or a LightGBM text model.
 MODEL_PATH = BASE / "models" / "reranker_lgbm.pkl"   # primary
 LEGACY_MODEL_PATH = BASE / "data" / "lightgbm_recommender.txt"  # fallback (older path)
 
