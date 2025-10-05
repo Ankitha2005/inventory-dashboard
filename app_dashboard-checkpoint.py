@@ -49,14 +49,53 @@ def load_main_data(path=DATA_PATH):
 
 @st.cache_data(show_spinner=False)
 def load_rerank_data(path=RERANK_PATH):
+    """
+    Robust loader for reranker CSV. Tries:
+     1) normal pandas.read_csv
+     2) pandas.read_csv(engine='python', sep=None) for auto-detected separators
+     3) read a small sample (nrows=2000) and return that (safe fallback)
+    Returns empty DataFrame on fatal failure (so dashboard still runs).
+    """
+    import csv
     if not path.exists():
+        st.warning(f"Rerank CSV not found at {path}; continuing without personalized history.")
         return pd.DataFrame()
-    df = pd.read_csv(path)
-    return df
+
+    # Attempt 1: standard read
+    try:
+        df = pd.read_csv(path)
+        return df
+    except Exception as e1:
+        st.warning(f"Standard CSV parse failed: {e1}. Trying tolerant reader...")
+
+    # Attempt 2: python engine with auto-detect separator
+    try:
+        df = pd.read_csv(path, engine="python", sep=None)
+        return df
+    except Exception as e2:
+        st.warning(f"Tolerant parse (engine=python) failed: {e2}. Trying small-sample fallback...")
+
+    # Attempt 3: read small sample (first N lines) and attempt to parse that safely
+    try:
+        # read raw bytes, extract first 2000 lines, write to temp small file
+        text = path.read_text(encoding="utf-8", errors="replace").splitlines()
+        sample_n = min(2000, len(text))
+        small_text = "\n".join(text[:sample_n])
+        from io import StringIO
+        df = pd.read_csv(StringIO(small_text), engine="python", sep=None)
+        st.warning(f"Loaded a sample of the rerank CSV ({sample_n} lines). Full CSV may be malformed.")
+        return df
+    except Exception as e3:
+        st.error(f"Unable to parse rerank CSV at {path}: {e3}. Continuing without reranker data.")
+        return pd.DataFrame()
 
 df = load_main_data()
 rerank_df = load_rerank_data()
 
+# show small preview so you can inspect delimiter/format directly in the app
+if RERANK_PATH.exists():
+    with st.expander(f"Preview first lines of {RERANK_PATH.name}"):
+        st.code(show_file_head(RERANK_PATH, n=20), language="text")
 st.success(f"Loaded main dataset with {len(df)} items.")
 
 # --- FILTERS ---
